@@ -80,7 +80,7 @@ const styles = (theme: Theme) => {
             marginBottom: SNACKBAR_INDENTS.snackbar.dense,
         },
     });
-}
+};
 
 
 type RemovedProps =
@@ -141,6 +141,13 @@ const SnackbarItem: React.FC<SnackbarItemProps> = ({ classes, ...props }) => {
         dense,
         TransitionComponent = Slide,
         TransitionProps: otherTransitionProps = {},
+         // ignored
+         onEnter,
+         onEntered,
+         onEntering,
+         onExit,
+         onExited,
+         onExiting,
         ...other
     } = props;
 
@@ -172,6 +179,11 @@ const SnackbarItem: React.FC<SnackbarItemProps> = ({ classes, ...props }) => {
         ...otherTransitionProps,
         ...singleTransitionProps,
         onExited: handleExitedScreen,
+        onEnter: callbacks.onEnter,
+        onEntering: callbacks.onEntering,
+        onExit: callbacks.onExit,
+        onExiting: callbacks.onExiting,
+        onEntered: createChainedFunction([callbacks.onEntered, handleEntered]),
     };
 
     let finalAction = singleAction || action;
@@ -200,16 +212,9 @@ const SnackbarItem: React.FC<SnackbarItemProps> = ({ classes, ...props }) => {
                 {...singleSnackProps}
                 open={snack.open}
                 anchorOrigin={anchorOrigin}
-                TransitionProps={transitionProps}
                 classes={omitNonMuiKeys(classes)}
                 onClose={handleClose}
-                onExit={callbacks.onExit}
-                onExiting={callbacks.onExiting}
-                onEnter={callbacks.onEnter}
-                onEntering={callbacks.onEntering}
-                // order matters. first callbacks.onEntered to set entered: true,
-                // then handleEntered to check if there's a request for closing
-                onEntered={createChainedFunction([callbacks.onEntered, handleEntered])}
+                TransitionProps={transitionProps}
             >
                 {/* @ts-ignore */}
                 {snackContent || (
